@@ -272,7 +272,7 @@ class ParserTest(unittest.TestCase):
         self.assertEqual(d['name']['type'], float)
 
         # test strings
-        self.assertEqual(d['name2']['type'], str)
+        self.assertEqual(d['name2']['type'], six.text_type)
 
         # test unknown type
         self.assertNotIn('type', d['name3'])
