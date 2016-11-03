@@ -101,6 +101,7 @@ class ParserTest(unittest.TestCase):
 
         args = parser.parse_args(
             '-a test sp1 -t sp11 -b okay sp12 -c sp2'.split())
+        print(args)
         # first level test
         self.assertTrue(args.a, 'test')
         self.assertTrue(args.sp1.a, 'test')
