@@ -33,15 +33,15 @@ sys.path.insert(0, os.path.abspath(osp.dirname(__file__)))
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
 extensions = [
-    'autodocsumm',
     'sphinx.ext.doctest',
     'sphinx.ext.intersphinx',
+    'sphinx.ext.autosummary',
     'sphinx.ext.todo',
     'sphinx.ext.viewcode',
     'sphinx.ext.napoleon',
     'IPython.sphinxext.ipython_console_highlighting',
     'IPython.sphinxext.ipython_directive',
-    'sphinx_nbexamples',
+    'autodocsumm',
 ]
 
 # Add any paths that contain templates here, relative to this directory.

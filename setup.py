@@ -38,6 +38,7 @@ setup(name='funcargparse',
       include_package_data=True,
       install_requires=[
           'docrep',
+          'six',
       ],
       setup_requires=pytest_runner,
       tests_require=['pytest'],
