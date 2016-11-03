@@ -85,4 +85,6 @@ Requirements
 The package only requires the docrep_ package which we use under the hood to
 extract the necessary parts from the docstrings.
 
+The package has been tested for python 2.7 and 3.5.
+
 .. _docrep: http://docrep.readthedocs.io/en/latest/
