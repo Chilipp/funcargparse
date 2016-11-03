@@ -80,7 +80,8 @@ class FuncArgParser(ArgumentParser):
     @docstrings.get_sectionsf('FuncArgParser.setup_args',
                               sections=['Parameters', 'Returns'])
     @docstrings.dedent
-    def setup_args(self, func=None, setup_as=None, insert_at=None):
+    def setup_args(self, func=None, setup_as=None, insert_at=None,
+                   interprete=True):
         """
         Add the parameters from the given `func` to the parameter settings
 
@@ -97,6 +98,10 @@ class FuncArgParser(ArgumentParser):
             The position where the given `func` should be inserted. If None,
             it will be appended at the end and used when calling the
             :meth:`parse2func` method
+        interprete: bool
+            If True (default), the docstrings are interpreted and switches and
+            lists are automatically inserted (see the
+            [interpretation-docs]_
 
         Returns
         -------
@@ -138,6 +143,11 @@ class FuncArgParser(ArgumentParser):
             >>> args.func is do_something
             >>> parser.parse2func('-a 2'.split())
             3
+
+        References
+        ----------
+        .. [interpretation-docs]
+           http://funcargparse.readthedocs.io/en/latest/docstring_interpretation.html)
         """
         def setup(func):
             # insert the function
@@ -178,10 +188,10 @@ class FuncArgParser(ArgumentParser):
                         d['default'] = defaults[i - default_min]
                     else:
                         d['positional'] = True
-                    if dtype == 'bool' and 'default' in d:
+                    if interprete and dtype == 'bool' and 'default' in d:
                         d['action'] = 'store_false' if d['default'] else \
                             'store_true'
-                    elif dtype:
+                    elif interprete and dtype:
                         if dtype.startswith('list of'):
                             d['nargs'] = '+'
                             dtype = dtype[7:].strip()
@@ -227,7 +237,7 @@ class FuncArgParser(ArgumentParser):
 
     @docstrings.dedent
     def setup_subparser(self, func=None, setup_as=None, insert_at=None,
-                        *args, **kwargs):
+                        interprete=True, *args, **kwargs):
         """
         Create a subparser with the name of the given function
 
@@ -268,7 +278,8 @@ class FuncArgParser(ArgumentParser):
             # replace underscore by '-'
             name = orig_name.replace('_', '-')
             parser = self._subparsers_action.add_parser(name)
-            parser.setup_args(func, setup_as=setup_as, insert_at=insert_at)
+            parser.setup_args(func, setup_as=setup_as, insert_at=insert_at,
+                              interprete=interprete)
             return func
         if func is None:
             return setup
