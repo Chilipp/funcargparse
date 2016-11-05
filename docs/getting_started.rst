@@ -202,7 +202,9 @@ method to directly create the subparser
     @suppress
     In [14]: parser = FuncArgParser()
 
-    In [14]: @parser.setup_subparser
+    In [15]: parser.add_subparsers()
+
+    In [16]: @parser.setup_subparser
        ....: def my_other_func(b=1):
        ....:     """
        ....:     Subparser summary
@@ -213,9 +215,9 @@ method to directly create the subparser
        ....:         Anything"""
        ....:     print(b * 500)
 
-    In [15]: parser.create_arguments(subparsers=True)
+    In [17]: parser.create_arguments(subparsers=True)
 
-    In [16]: parser.print_help()
+    In [18]: parser.print_help()
 
 which now created the ``my-other-func`` sub command.
 
@@ -231,39 +233,39 @@ example
 
 .. ipython::
 
-    In [17]: from argparse import ArgumentParser
+    In [19]: from argparse import ArgumentParser
 
-    In [18]: argparser = ArgumentParser()
+    In [20]: argparser = ArgumentParser()
 
-    In [19]: funcargparser = FuncArgParser()
+    In [21]: funcargparser = FuncArgParser()
 
-    In [20]: sps_argparse = argparser.add_subparsers()
+    In [22]: sps_argparse = argparser.add_subparsers()
 
-    In [21]: sps_funcargparse = funcargparser.add_subparsers(chain=True)
+    In [23]: sps_funcargparse = funcargparser.add_subparsers(chain=True)
 
-    In [22]: sps_argparse.add_parser('dummy').add_argument('-a')
+    In [24]: sps_argparse.add_parser('dummy').add_argument('-a')
 
-    In [23]: sps_funcargparse.add_parser('dummy').add_argument('-a')
+    In [25]: sps_funcargparse.add_parser('dummy').add_argument('-a')
 
-    In [24]: ns_default = argparser.parse_args('dummy -a 3'.split())
+    In [26]: ns_default = argparser.parse_args('dummy -a 3'.split())
 
-    In [25]: ns_chained = funcargparser.parse_args('dummy -a 3'.split())
+    In [27]: ns_chained = funcargparser.parse_args('dummy -a 3'.split())
 
-    In [26]: print(ns_default, ns_chained)
+    In [28]: print(ns_default, ns_chained)
 
 So while the default behaviour is, to put the arguments in the main namespace
 like
 
 .. ipython::
 
-    In [27]: ns_default.a
+    In [29]: ns_default.a
 
 the chained subparser procedure puts the commands for the ``'dummy'`` command
 into an extra namespace like
 
 .. ipython::
 
-    In [28]: ns_chained.dummy.a
+    In [30]: ns_chained.dummy.a
 
 This has the advantages that we don't mix up subparsers if we chain them. So
 here is an example demonstrating the power of it
@@ -271,18 +273,18 @@ here is an example demonstrating the power of it
 .. ipython::
     :okexcept:
 
-    In [29]: sps_argparse.add_parser('dummy2').add_argument('-a')
+    In [31]: sps_argparse.add_parser('dummy2').add_argument('-a')
 
-    In [30]: sps_funcargparse.add_parser('dummy2').add_argument('-a')
+    In [32]: sps_funcargparse.add_parser('dummy2').add_argument('-a')
 
     # with allowing chained subcommands, we get
-    In [31]: ns_chained = funcargparser.parse_args('dummy -a 3 dummy2 -a 4'.split())
+    In [33]: ns_chained = funcargparser.parse_args('dummy -a 3 dummy2 -a 4'.split())
 
-    In [32]: print(ns_chained.dummy.a, ns_chained.dummy2.a)
+    In [34]: print(ns_chained.dummy.a, ns_chained.dummy2.a)
 
     # on the other side, the default ArgumentParser raises an error because
     # chaining is not allowed
-    In [33]: ns_default = argparser.parse_args('dummy -a 3 dummy2 -a 4'.split())
+    In [35]: ns_default = argparser.parse_args('dummy -a 3 dummy2 -a 4'.split())
 
 Furthermore, you can use the :meth:`~FuncArgParser.parse_chained` and the
 :meth:`~FuncArgParser.parse_known_chained` methods to parse directly to the
@@ -290,23 +292,23 @@ subparsers.
 
 .. ipython::
 
-    In [34]: parser = FuncArgParser()
+    In [36]: parser = FuncArgParser()
 
-    In [35]: sps = parser.add_subparsers(chain=True)
+    In [37]: sps = parser.add_subparsers(chain=True)
 
-    In [35]: @parser.setup_subparser
+    In [38]: @parser.setup_subparser
        ....: def subcommand_1():
        ....:     print('Calling subcommand 1')
        ....:     return 1
 
-    In [36]: @parser.setup_subparser
+    In [39]: @parser.setup_subparser
        ....: def subcommand_2():
        ....:    print('Calling subcommand 2')
        ....:    return 2
 
-    In [37]: parser.create_arguments(True)
+    In [40]: parser.create_arguments(True)
 
-    In [38]: parser.parse_chained('subcommand-1 subcommand-2'.split())
+    In [41]: parser.parse_chained('subcommand-1 subcommand-2'.split())
 
 
 .. warning::
@@ -316,19 +318,21 @@ subparsers.
 
     .. ipython::
 
-        In [39]: sp = sps.add_parser('subcommand-3')
+        In [42]: sp = sps.add_parser('subcommand-3')
+
+        In [43]: sps1 = sp.add_subparsers(chain=True)
 
         # create the same subparser subcommand-1 but as a subcommand of the
         # subcommand-3 subparser
-        In [41]: @sp.setup_subparser(chain=True)
+        In [44]: @sp.setup_subparser
            ....: def subcommand_1():
            ....:     print('Calling modified subcommand 1')
            ....:     return 3.1
 
-        In [42]: sp.create_arguments(True)
+        In [45]: sp.create_arguments(True)
 
         # subcommand-1 get's called
-        In [42]: parser.parse_chained('subcommand-1 subcommand-3'.split())
+        In [46]: parser.parse_chained('subcommand-1 subcommand-3'.split())
 
         # subcommand-3.subcommand-1 get's called
-        In [43]: parser.parse_chained('subcommand-3 subcommand-1'.split())
+        In [47]: parser.parse_chained('subcommand-3 subcommand-1'.split())
