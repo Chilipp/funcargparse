@@ -11,7 +11,7 @@ def readme():
 
 
 setup(name='funcargparse',
-      version='0.0.1',
+      version='0.1.0',
       description=(
           'Create an argparse.ArgumentParser from function docstrings'),
       long_description=readme(),
