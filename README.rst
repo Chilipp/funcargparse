@@ -74,7 +74,7 @@ Or you install it via::
 
     $ python setup.py install
 
-from the `source on GitHub`__.
+from the `source on GitHub`_.
 
 
 .. _source on GitHub: https://github.com/Chilipp/funcargparse
