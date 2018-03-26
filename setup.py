@@ -11,7 +11,7 @@ def readme():
 
 
 setup(name='funcargparse',
-      version='0.1.2',
+      version='0.2.0',
       description=(
           'Create an argparse.ArgumentParser from function docstrings'),
       long_description=readme(),
@@ -34,7 +34,7 @@ setup(name='funcargparse',
       packages=find_packages(exclude=['docs', 'tests*', 'examples']),
       include_package_data=True,
       install_requires=[
-          'docrep',
+          'docrep>=0.2.2',
           'six',
       ],
       setup_requires=pytest_runner,

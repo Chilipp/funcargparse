@@ -2,6 +2,7 @@
 import unittest
 import six
 from funcargparse import FuncArgParser, docstrings
+from docrep import dedents
 
 
 class ParserTest(unittest.TestCase):
@@ -374,6 +375,59 @@ class ParserTest(unittest.TestCase):
         self.assertIs(sp.unfinished_arguments['a']['type'], int)
         self.assertNotIn('metavar', sp.unfinished_arguments['a'])
         self.assertIn('Default:', sp.unfinished_arguments['a']['help'])
+
+    def test_epilog(self):
+        """Test whether the epilog is extracted correctly"""
+        heading = 'Notes\n-----'
+        content = 'should be included in the parser epilog'
+        epilog = heading + '\n' + content
+
+        @docstrings.dedent
+        def test_func(a=1):
+            """Test function
+
+            Parameters
+            ----------
+            a: int
+                A parameter"""
+
+        test_func.__doc__ += '\n\n' + epilog
+
+        # test standard heading formatter
+        parser = FuncArgParser()
+        parser.setup_args(test_func)
+
+        self.assertEqual(parser.epilog, epilog)
+
+        # test bold formatter
+        parser = FuncArgParser(epilog_formatter='bold')
+        parser.setup_args(test_func)
+
+        self.assertEqual(parser.epilog, '**Notes**' + '\n\n' + content)
+
+        # test rubric formatter
+        parser = FuncArgParser(epilog_formatter='rubric')
+        parser.setup_args(test_func)
+
+        self.assertEqual(parser.epilog, '.. rubric:: Notes' + '\n\n' + content)
+
+        def formatter(section, text):
+            return section + text
+
+        # test function formatter
+        parser = FuncArgParser(epilog_formatter=formatter)
+        parser.setup_args(test_func)
+
+        self.assertEqual(parser.epilog, 'Notes' + content)
+
+        # test appending
+        parser.setup_args(test_func)
+        self.assertEqual(parser.epilog, '\n\n'.join(['Notes' + content] * 2))
+
+        # test overwrite
+        parser.setup_args(test_func, overwrite=True)
+        self.assertEqual(parser.epilog, 'Notes' + content)
+
 
 if __name__ == '__main__':
     unittest.main()

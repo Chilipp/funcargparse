@@ -105,3 +105,78 @@ You can always disable the points 2-4 by setting ``interprete=False`` in the
 :meth:`~FuncArgParser.setup_args` and :meth:`~FuncArgParser.setup_subparser`
 call or you change the arguments by yourself by modifying the
 :attr:`~FuncArgParser.unfinished_arguments` attribute, etc.
+
+
+Epilog and descriptions
+-----------------------
+When calling the :meth:`FuncArgParser.setup_args` method or the
+:meth:`FuncArgParser.setup_subparser` method, we interprete the `Notes` and
+`References` methods as part of the epilog. And we interprete the description
+of the function (i.e. the summary and the extended summary) as the description
+of the parser. This is illustrated by this small example:
+
+.. ipython::
+
+    In [1]: from funcargparse import FuncArgParser
+
+    In [2]: def do_something(a=1):
+       ...:     """This is the summary and will go to the description
+       ...:
+       ...:     This is the extended summary and will go to the description
+       ...:
+       ...:     Parameters
+       ...:     ----------
+       ...:     a: int
+       ...:         This is a parameter that will be accessible as `-a` option
+       ...:
+       ...:     Notes
+       ...:     -----
+       ...:     This section will appear in the epilog"""
+
+    In [3]: parser = FuncArgParser(prog='do-something')
+
+    In [4]: parser.setup_args(do_something)
+       ...: parser.create_arguments()
+
+    In [5]: parser.print_help()
+
+Which section goes into the epilog is defined by the
+:attr:`FuncArgParser.epilog_sections` attribute (specified in the
+`epilog_sections` parameter of the :class:`FuncArgParser` class). By default,
+we use the `Notes` and `References` section.
+
+Also the way how the section is formatted can be specified, using the
+:attr:`FuncArgParser.epilog_formatter` attribute or the
+`epilog_formatter` parameter of the :class:`FuncArgParser` class. By default,
+each section will be included with the section header (e.g. *Notes*) followed
+by a line of hyphens (``'-'``). But you can also specify a rubric section
+formatting (which would be better when being used with the sphinx-argparse_
+package) or any other callable. See the following example:
+
+.. ipython::
+
+    In [6]: parser = FuncArgParser()
+       ...: print(repr(parser.epilog_formatter))
+
+    In [7]: parser.setup_args(do_something)
+       ...: print(parser.epilog)
+
+    # Use the bold formatter
+    In [8]: parser.epilog_formatter = 'bold'
+       ...: parser.setup_args(do_something, overwrite=True)
+       ...: print(parser.epilog)
+
+    # Use the rubric directive
+    In [9]: parser.epilog_formatter = 'rubric'
+       ...: parser.setup_args(do_something, overwrite=True)
+       ...: print(parser.epilog)
+
+    # Use a custom function
+    In [10]: def uppercase_section(section, text):
+       ....:     return section.upper() + '\n' + text
+       ....: parser.epilog_formatter = uppercase_section
+       ....: parser.setup_args(do_something, overwrite=True)
+       ....: print(parser.epilog)
+
+
+.. _sphinx-argparse: http://sphinx-argparse.readthedocs.io/en/latest/

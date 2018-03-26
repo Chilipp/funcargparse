@@ -73,7 +73,6 @@ Content
 
     getting_started
     docstring_interpretation
-    examples/index
     api/funcargparse
 
 
@@ -111,4 +110,3 @@ Indices and tables
 * :ref:`genindex`
 * :ref:`modindex`
 * :ref:`search`
-

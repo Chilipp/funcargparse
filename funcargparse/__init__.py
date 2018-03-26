@@ -1,4 +1,5 @@
 from __future__ import print_function, division
+import os
 import six
 import sys
 import inspect
@@ -22,10 +23,13 @@ else:
     import builtins
 
 
-__version__ = '0.1.2'
+__version__ = '0.2.0'
 
 
 docstrings = DocstringProcessor()
+
+
+_on_rtd = os.environ.get('READTHEDOCS', None) == 'True'
 
 
 class FuncArgParser(ArgumentParser):
@@ -37,14 +41,89 @@ class FuncArgParser(ArgumentParser):
     #: The unfinished arguments after the setup
     unfinished_arguments = {}
 
+    #: The sections to extract from a function docstring that should be used
+    #: in the epilog of this parser. See also the :meth:`setup_args` method
+    epilog_sections = ['Notes', 'References']
+
+    #: The formatter specification for the epilog. This can either be a string
+    #: out of 'header', 'bold', or
+    #: 'rubric' or a callable (i.e. function) that takes two arguments,
+    #: the section title and the section text, and returns a string.
+    #:
+    #: 'heading'
+    #:     Use section headers such as::
+    #:
+    #:         Notes
+    #:         -----
+    #: 'bold'
+    #:     Just make a bold header for the section, e.g. ``**Notes**``
+    #: 'rubric'
+    #:     Use a rubric rst directive, e.g. ``.. rubric:: Notes``
+    #:
+    #: .. warning::
+    #:
+    #:     When building a sphinx documentation using the sphinx-argparse
+    #:     module, this value should be set to ``'bold'`` or ``'rubric'``! Just
+    #:     add this two lines to your conf.py:
+    #:
+    #:     .. code-block:: python
+    #:
+    #:         import funcargparse
+    #:         funcargparse.FuncArgParser.epilog_formatter = 'rubric'
+    epilog_formatter = 'heading'
+
     def __init__(self, *args, **kwargs):
+        """
+        Parameters
+        ----------
+        ``*args,**kwargs``
+            Theses arguments are determined by the
+            :class:`argparse.ArgumentParser` base class. Note that by default,
+            we use a :class:`argparse.RawTextHelpFormatter` class for the
+            `formatter_class` keyword, whereas the
+            :class:`argparse.ArgumentParser` uses a
+            :class:`argparse.HelpFormatter`
+
+        Other Parameters
+        ----------------
+        epilog_sections: list of str
+            The default sections to use for the epilog (see the
+            :attr:`epilog_sections` attribute). They can also be specified
+            each time the :meth:`setup_args` method is called
+        epilog_formatter: {'header', 'bold', 'rubric'} or function
+            Specify how the epilog sections should be formatted and defaults to
+            the :attr:`epilog_formatter` attribute. This can either be a string
+            out of 'header', 'bold', or 'rubric' or a callable (i.e. function)
+            that takes two arguments, the section title and the section text,
+            and returns a string.
+
+            'heading'
+                Use section headers such as::
+
+                    Notes
+                    -----
+            'bold'
+                Just make a bold header for the section, e.g. ``**Notes**``
+            'rubric'
+                Use a rubric rst directive, e.g. ``.. rubric:: Notes``
+            """
         self._subparsers_action = None
+        kwargs.setdefault('formatter_class', argparse.RawTextHelpFormatter)
+        epilog_sections = kwargs.pop('epilog_sections', None)
+        if epilog_sections is not None:
+            self.epilog_sections = epilog_sections
+        epilog_formatter = kwargs.pop('epilog_formatter', None)
+        if epilog_formatter is not None:
+            self.epilog_formatter = epilog_formatter
         super(FuncArgParser, self).__init__(*args, **kwargs)
         self.unfinished_arguments = OrderedDict()
         self._used_functions = []
         self.__currentarg = None
         self._chain_subparsers = False
         self._setup_as = None
+        self._epilog_formatters = {'heading': self.format_heading,
+                                   'bold': self.format_bold,
+                                   'rubric': self.format_rubric}
 
     @staticmethod
     def get_param_doc(doc, param):
@@ -81,7 +160,8 @@ class FuncArgParser(ArgumentParser):
                               sections=['Parameters', 'Returns'])
     @docstrings.dedent
     def setup_args(self, func=None, setup_as=None, insert_at=None,
-                   interprete=True):
+                   interprete=True, epilog_sections=None,
+                   overwrite=False, append_epilog=True):
         """
         Add the parameters from the given `func` to the parameter settings
 
@@ -102,6 +182,14 @@ class FuncArgParser(ArgumentParser):
             If True (default), the docstrings are interpreted and switches and
             lists are automatically inserted (see the
             [interpretation-docs]_
+        epilog_sections: list of str
+            The headers of the sections to extract. If None, the
+            :attr:`epilog_sections` attribute is used
+        overwrite: bool
+            If True, overwrite the existing epilog and the existing description
+            of the parser
+        append_epilog: bool
+            If True, append to the existing epilog
 
         Returns
         -------
@@ -167,10 +255,16 @@ class FuncArgParser(ArgumentParser):
             # create arguments
             args, varargs, varkw, defaults = inspect.getargspec(func)
             full_doc = docstrings.dedents(inspect.getdoc(func))
-            if not self.description:
-                summary = docstrings.get_summary(full_doc)
-                if summary:
+
+            summary = docstrings.get_full_description(full_doc)
+            if summary:
+                if not self.description or overwrite:
                     self.description = summary
+                full_doc = docstrings._remove_summary(full_doc)
+
+            self.extract_as_epilog(full_doc, epilog_sections, overwrite,
+                                   append_epilog)
+
             doc = docstrings._get_section(full_doc, 'Parameters') + '\n'
             doc += docstrings._get_section(full_doc, 'Other Parameters')
             doc = doc.rstrip()
@@ -236,9 +330,10 @@ class FuncArgParser(ArgumentParser):
         return ret
 
     @docstrings.dedent
-    def setup_subparser(self, func=None, setup_as=None, insert_at=None,
-                        interprete=True, return_parser=False, name=None,
-                        **kwargs):
+    def setup_subparser(
+            self, func=None, setup_as=None, insert_at=None, interprete=True,
+            epilog_sections=None, overwrite=False, append_epilog=True,
+            return_parser=False, name=None, **kwargs):
         """
         Create a subparser with the name of the given function
 
@@ -292,8 +387,10 @@ class FuncArgParser(ArgumentParser):
             kwargs.setdefault('help', docstrings.get_summary(
                 docstrings.dedents(inspect.getdoc(func))))
             parser = self._subparsers_action.add_parser(name2use, **kwargs)
-            parser.setup_args(func, setup_as=setup_as, insert_at=insert_at,
-                              interprete=interprete)
+            parser.setup_args(
+                func, setup_as=setup_as, insert_at=insert_at,
+                interprete=interprete, epilog_sections=epilog_sections,
+                overwrite=overwrite, append_epilog=append_epilog)
             return func, parser
         if func is None:
             return lambda f: setup(f)[0]
@@ -463,6 +560,61 @@ class FuncArgParser(ArgumentParser):
         s: str
             The string to append to the help"""
         return self._as_decorator('append2help', arg, s)
+
+    @staticmethod
+    def format_bold(section, text):
+        """Make a bold formatting for the section header"""
+        return '**%s**\n\n%s' % (section, text)
+
+    @staticmethod
+    def format_rubric(section, text):
+        """Make a bold formatting for the section header"""
+        return '.. rubric:: %s\n\n%s' % (section, text)
+
+    @staticmethod
+    def format_heading(section, text):
+        return '\n'.join([section, '-' * len(section), text])
+
+    def format_epilog_section(self, section, text):
+        """Format a section for the epilog by inserting a format"""
+        try:
+            func = self._epilog_formatters[self.epilog_formatter]
+        except KeyError:
+            if not callable(self.epilog_formatter):
+                raise
+            func = self.epilog_formatter
+        return func(section, text)
+
+    def extract_as_epilog(self, text, sections=None, overwrite=False,
+                          append=True):
+        """Extract epilog sections from the a docstring
+
+        Parameters
+        ----------
+        text
+            The docstring to use
+        sections: list of str
+            The headers of the sections to extract. If None, the
+            :attr:`epilog_sections` attribute is used
+        overwrite: bool
+            If True, overwrite the existing epilog
+        append: bool
+            If True, append to the existing epilog"""
+        if sections is None:
+            sections = self.epilog_sections
+        if ((not self.epilog or overwrite or append) and sections):
+            epilog_parts = []
+            for sec in sections:
+                text = docstrings._get_section(text, sec).strip()
+                if text:
+                    epilog_parts.append(
+                        self.format_epilog_section(sec, text))
+            if epilog_parts:
+                epilog = '\n\n'.join(epilog_parts)
+                if overwrite or not self.epilog:
+                    self.epilog = epilog
+                else:
+                    self.epilog += '\n\n' + epilog
 
     def grouparg(self, arg, my_arg=None, parent_cmds=[]):
         """
