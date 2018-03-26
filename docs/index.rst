@@ -74,6 +74,7 @@ Content
     getting_started
     docstring_interpretation
     api/funcargparse
+    changelog
 
 
 .. _install:
