@@ -3,6 +3,10 @@ python:
   - "2.7"
   - "3.5"
   - "3.6"
+  - "3.7"
+# necessary for python 3.7, see https://github.com/travis-ci/travis-ci/issues/9815
+dist: xenial
+sudo: yes
 install:
   - pip install -U pip setuptools pytest argparse coveralls
   - python setup.py install
