@@ -1,3 +1,7 @@
+v0.2.1
+======
+Small patch to use ``inspect.cleandoc`` instead of ``docrep.dedents``
+
 v0.2.0
 ======
 This release just adds some new interpretation features to extract the

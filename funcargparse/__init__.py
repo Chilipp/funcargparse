@@ -6,7 +6,7 @@ import inspect
 from itertools import chain, groupby
 from argparse import ArgumentParser, Namespace
 import argparse
-from docrep import DocstringProcessor, dedents
+from docrep import DocstringProcessor
 
 try:
     from cyordereddict import OrderedDict
@@ -23,7 +23,7 @@ else:
     import builtins
 
 
-__version__ = '0.2.0'
+__version__ = '0.2.1'
 
 
 docstrings = DocstringProcessor()
@@ -150,7 +150,7 @@ class FuncArgParser(ArgumentParser):
         dtype = None
         if arg_doc:
             lines = arg_doc.splitlines()
-            arg_doc = dedents('\n' + '\n'.join(lines[1:]))
+            arg_doc = inspect.cleandoc('\n' + '\n'.join(lines[1:]))
             param_desc = lines[0].split(':', 1)
             if len(param_desc) > 1:
                 dtype = param_desc[1].strip()
