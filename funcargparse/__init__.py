@@ -254,7 +254,8 @@ class FuncArgParser(ArgumentParser):
 
             # create arguments
             args, varargs, varkw, defaults = inspect.getargspec(func)
-            full_doc = docstrings.dedents(inspect.getdoc(func))
+            doc = inspect.getdoc(func)
+            full_doc = docstrings.dedents(doc) if doc else ''
 
             summary = docstrings.get_full_description(full_doc)
             if summary:
@@ -384,8 +385,9 @@ class FuncArgParser(ArgumentParser):
             name2use = name
             if name2use is None:
                 name2use = func.__name__.replace('_', '-')
+            doc = inspect.getdoc(func)
             kwargs.setdefault('help', docstrings.get_summary(
-                docstrings.dedents(inspect.getdoc(func))))
+                docstrings.dedents(doc) if doc else ''))
             parser = self._subparsers_action.add_parser(name2use, **kwargs)
             parser.setup_args(
                 func, setup_as=setup_as, insert_at=insert_at,

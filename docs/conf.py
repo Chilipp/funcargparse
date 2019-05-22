@@ -18,11 +18,14 @@ import os.path as osp
 import re
 import six
 import funcargparse
+import warnings
 
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 sys.path.insert(0, os.path.abspath(osp.dirname(__file__)))
+
+warnings.filterwarnings('ignore', 'To exit: use')
 
 # -- General configuration ------------------------------------------------
 
@@ -389,7 +392,7 @@ epub_exclude_files = ['search.html']
 
 # Example configuration for intersphinx: refer to the Python standard library.
 intersphinx_mapping = {
-    'sphinx': ('http://sphinx-doc.org/', None),
+    'sphinx': ('http://www.sphinx-doc.org/en/stable/', None),
     'docrep': ('http://docrep.readthedocs.org/en/latest', None),
 }
 if six.PY3:
