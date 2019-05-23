@@ -253,7 +253,11 @@ class FuncArgParser(ArgumentParser):
                 self._setup_as = setup_as
 
             # create arguments
-            args, varargs, varkw, defaults = inspect.getfullargspec(func)[:4]
+            try:
+                spec = inspect.getfullargspec(func)[:4]
+            except AttributeError:  # py27
+                spec = inspect.getargspec(func)
+            args, varargs, varkw, defaults = spec
             doc = inspect.getdoc(func)
             full_doc = docstrings.dedents(doc) if doc else ''
 
