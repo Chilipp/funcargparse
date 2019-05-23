@@ -253,7 +253,7 @@ class FuncArgParser(ArgumentParser):
                 self._setup_as = setup_as
 
             # create arguments
-            args, varargs, varkw, defaults = inspect.getargspec(func)
+            args, varargs, varkw, defaults = inspect.getfullargspec(func)[:4]
             doc = inspect.getdoc(func)
             full_doc = docstrings.dedents(doc) if doc else ''
 
