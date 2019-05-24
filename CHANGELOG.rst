@@ -1,3 +1,8 @@
+v0.2.2
+======
+Minor patch to use ``inspect.getfullargspec`` instead of ``inspect.getargspec``
+because the latter has been deprecated in python 3.0
+
 v0.2.1
 ======
 Small patch to use ``inspect.cleandoc`` instead of ``docrep.dedents``
