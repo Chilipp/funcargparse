@@ -145,8 +145,8 @@ class FuncArgParser(ArgumentParser):
             The documentation of the given `param`
         str
             The datatype of the given `param`"""
-        arg_doc = docstrings.keep_params_s(doc, [param]) or \
-            docstrings.keep_types_s(doc, [param])
+        arg_doc = docrep.keep_params(doc, [param]) or \
+            docrep.keep_types(doc, [param])
         dtype = None
         if arg_doc:
             lines = arg_doc.splitlines()
@@ -156,8 +156,8 @@ class FuncArgParser(ArgumentParser):
                 dtype = param_desc[1].strip()
         return arg_doc, dtype
 
-    @docstrings.get_sectionsf('FuncArgParser.setup_args',
-                              sections=['Parameters', 'Returns'])
+    @docstrings.get_sections(base='FuncArgParser.setup_args',
+                             sections=['Parameters', 'Returns'])
     @docstrings.dedent
     def setup_args(self, func=None, setup_as=None, insert_at=None,
                    interprete=True, epilog_sections=None,
@@ -259,7 +259,7 @@ class FuncArgParser(ArgumentParser):
                 spec = inspect.getargspec(func)
             args, varargs, varkw, defaults = spec
             doc = inspect.getdoc(func)
-            full_doc = docstrings.dedents(doc) if doc else ''
+            full_doc = docstrings.dedent(doc) if doc else ''
 
             summary = docstrings.get_full_description(full_doc)
             if summary:
@@ -314,7 +314,7 @@ class FuncArgParser(ArgumentParser):
         else:
             return setup(func)
 
-    @docstrings.get_sectionsf('FuncArgParser.add_subparsers')
+    @docstrings.get_sections(base='FuncArgParser.add_subparsers')
     @docstrings.dedent
     def add_subparsers(self, *args, **kwargs):
         """
@@ -391,7 +391,7 @@ class FuncArgParser(ArgumentParser):
                 name2use = func.__name__.replace('_', '-')
             doc = inspect.getdoc(func)
             kwargs.setdefault('help', docstrings.get_summary(
-                docstrings.dedents(doc) if doc else ''))
+                docstrings.dedent(doc) if doc else ''))
             parser = self._subparsers_action.add_parser(name2use, **kwargs)
             parser.setup_args(
                 func, setup_as=setup_as, insert_at=insert_at,
@@ -403,7 +403,7 @@ class FuncArgParser(ArgumentParser):
         else:
             return setup(func)[int(return_parser)]
 
-    @docstrings.get_sectionsf('FuncArgParser.update_arg')
+    @docstrings.get_sections(base='FuncArgParser.update_arg')
     @docstrings.dedent
     def update_arg(self, arg, if_existent=None, **kwargs):
         """
@@ -722,7 +722,7 @@ class FuncArgParser(ArgumentParser):
                 list(args) + ['__dummy'])
         return super(FuncArgParser, self).parse_known_args(args)
 
-    @docstrings.get_sectionsf('FuncArgParser.update_short')
+    @docstrings.get_sections(base='FuncArgParser.update_short')
     @docstrings.dedent
     def update_short(self, **kwargs):
         """
@@ -793,7 +793,7 @@ class FuncArgParser(ArgumentParser):
         """
         return self._as_decorator('update_short', **kwargs)
 
-    @docstrings.get_sectionsf('FuncArgParser.update_long')
+    @docstrings.get_sections(base='FuncArgParser.update_long')
     @docstrings.dedent
     def update_long(self, **kwargs):
         """

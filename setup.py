@@ -36,7 +36,7 @@ setup(name='funcargparse',
       packages=find_packages(exclude=['docs', 'tests*', 'examples']),
       include_package_data=True,
       install_requires=[
-          'docrep>=0.2.2',
+          'docrep>=0.3.0',
           'six',
       ],
       setup_requires=pytest_runner,
