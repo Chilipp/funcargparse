@@ -1,3 +1,7 @@
+v0.2.3
+======
+Minor patch for docrep 0.3
+
 v0.2.2
 ======
 Minor patch to use ``inspect.getfullargspec`` instead of ``inspect.getargspec``
