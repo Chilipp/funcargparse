@@ -6,7 +6,7 @@ import inspect
 from itertools import chain, groupby
 from argparse import ArgumentParser, Namespace
 import argparse
-from docrep import DocstringProcessor
+import docrep
 
 try:
     from cyordereddict import OrderedDict
@@ -26,7 +26,7 @@ else:
 __version__ = '0.2.3'
 
 
-docstrings = DocstringProcessor()
+docstrings = docrep.DocstringProcessor()
 
 
 _on_rtd = os.environ.get('READTHEDOCS', None) == 'True'
@@ -145,8 +145,8 @@ class FuncArgParser(ArgumentParser):
             The documentation of the given `param`
         str
             The datatype of the given `param`"""
-        arg_doc = docrep.keep_params(doc, [param]) or \
-            docrep.keep_types(doc, [param])
+        arg_doc = docrep.keep_params(doc, param) or \
+            docrep.keep_types(doc, param)
         dtype = None
         if arg_doc:
             lines = arg_doc.splitlines()
