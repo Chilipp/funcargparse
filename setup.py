@@ -11,7 +11,7 @@ def readme():
 
 
 setup(name='funcargparse',
-      version='0.2.3',
+      version='0.2.4',
       description=(
           'Create an argparse.ArgumentParser from function docstrings'),
       long_description=readme(),
@@ -37,8 +37,8 @@ setup(name='funcargparse',
           'Tracker': 'https://github.com/Chilipp/funcargparse/issues',
       },
       author='Philipp S. Sommer',
-      author_email='philipp.sommer@hzg.de',
-      license="GPLv2",
+      author_email='philipp.sommer@hereon.de',
+      license="Apache-2.0",
       packages=find_packages(exclude=['docs', 'tests*', 'examples']),
       include_package_data=True,
       install_requires=[
