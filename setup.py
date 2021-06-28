@@ -11,7 +11,7 @@ def readme():
 
 
 setup(name='funcargparse',
-      version='0.2.4',
+      version='0.2.5',
       description=(
           'Create an argparse.ArgumentParser from function docstrings'),
       long_description=readme(),
@@ -20,7 +20,7 @@ setup(name='funcargparse',
         'Development Status :: 5 - Production/Stable',
         'Intended Audience :: Developers',
         'Topic :: Documentation',
-        'License :: OSI Approved :: GNU General Public License v2 (GPLv2)',
+        'License :: OSI Approved :: Apache Software License',
         'Programming Language :: Python :: 2',
         'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3',

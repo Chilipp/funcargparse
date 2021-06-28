@@ -82,8 +82,8 @@ add_module_names = False
 
 # General information about the project.
 project = u'funcargparse'
-copyright = u'2016, Philipp Sommer'
-author = u'Philipp Sommer'
+copyright = '2016-2019, Philipp S. Sommer; 2020-2021, Helmholtz-Zentrum Hereon'
+author = u'Philipp S. Sommer'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
