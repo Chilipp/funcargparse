@@ -11,7 +11,7 @@ Create an argparse.ArgumentParser from function docstrings
     * - docs
       - |docs|
     * - tests
-      - |travis| |requires| |coveralls|
+      - |github-action| |requires| |codecov|
     * - package
       - |version| |supported-versions| |supported-implementations|
 
@@ -19,13 +19,13 @@ Create an argparse.ArgumentParser from function docstrings
     :alt: Documentation Status
     :target: http://funcargparse.readthedocs.io/en/latest/?badge=latest
 
-.. |travis| image:: https://travis-ci.org/Chilipp/funcargparse.svg?branch=master
-    :alt: Travis
-    :target: https://travis-ci.org/Chilipp/funcargparse
+.. |github-action| image:: https://github.com/Chilipp/funcargparse/workflows/Tests/badge.svg
+    :alt: Tests
+    :target: https://github.com/Chilipp/funcargparse/actions?query=workflow%3A%22Tests%22
 
-.. |coveralls| image:: https://coveralls.io/repos/github/Chilipp/funcargparse/badge.svg?branch=master
-    :alt: Coverage
-    :target: https://coveralls.io/github/Chilipp/funcargparse?branch=master
+.. |codecov| image:: https://codecov.io/gh/Chilipp/funcargparse/branch/master/graph/badge.svg?token=UX1B5ocBbP
+    :alt: Codecov
+    :target: https://codecov.io/gh/Chilipp/funcargparse
 
 .. |requires| image:: https://requires.io/github/Chilipp/funcargparse/requirements.svg?branch=master
     :alt: Requirements Status
@@ -42,7 +42,6 @@ Create an argparse.ArgumentParser from function docstrings
 .. |supported-implementations| image:: https://img.shields.io/pypi/implementation/funcargparse.svg?style=flat
     :alt: Supported implementations
     :target: https://pypi.python.org/pypi/funcargparse
-
 
 .. end-badges
 
