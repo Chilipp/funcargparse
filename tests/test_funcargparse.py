@@ -20,7 +20,6 @@ limitations under the License.
 import unittest
 import six
 from funcargparse import FuncArgParser, docstrings
-from docrep import dedents
 
 
 class ParserTest(unittest.TestCase):
@@ -33,7 +32,7 @@ class ParserTest(unittest.TestCase):
         parser = FuncArgParser()
         dtype = 'int'
         help = 'Just a dummy name'
-        doc = docstrings.dedents("""
+        doc = docstrings.dedent("""
             Test function for positional argument
 
             Parameters
@@ -59,7 +58,7 @@ class ParserTest(unittest.TestCase):
         parser = FuncArgParser()
         dtype = 'int'
         help = 'Just a dummy name'
-        doc = docstrings.dedents("""
+        doc = docstrings.dedent("""
             Test function for positional argument
 
             Parameters
@@ -82,7 +81,7 @@ class ParserTest(unittest.TestCase):
         parser = FuncArgParser()
         dtype = 'bool'
         help = 'Just a dummy name'
-        doc = docstrings.dedents("""
+        doc = docstrings.dedent("""
             Test function for positional argument
 
             Parameters
@@ -219,7 +218,7 @@ class ParserTest(unittest.TestCase):
         parser = FuncArgParser()
         dtype = 'bool'
         help = 'Just a dummy name'
-        doc = docstrings.dedents("""
+        doc = docstrings.dedent("""
             Test function for positional argument
 
             Parameters
